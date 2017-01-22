@@ -1,4 +1,5 @@
 #region Customers who buy again and again e.g. 3 times, 5 times, etc.
+select * from orders;
 #endregion Customers who buy again and again e.g. 3 times, 5 times, etc.
 
 #region Customers who buy the most time
