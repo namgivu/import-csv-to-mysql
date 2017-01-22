@@ -34,14 +34,15 @@ shCreateSchema='{mysqlCmd} -e "{sqlCreateSchema}"'.format(mysqlCmd=mysqlCmd, sql
 
 shCreateTableNData='{mysqlCmd} {DB_NAME} < {scriptFile}'.format(mysqlCmd=mysqlCmd, DB_NAME=DB_NAME, scriptFile=scriptFile)
 
+run_bash(shCreateSchema)
+run_bash(shCreateTableNData)
 
 print '''
-Commands to run
-
-- create db schema
+Ran command
+#create db schema
 {shCreateSchema}
 
-- create table & data
+#create table & data
 {shCreateTableNData}
 
 DONE

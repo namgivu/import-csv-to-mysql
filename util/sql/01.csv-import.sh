@@ -16,13 +16,16 @@ shLnCSVFile="ln -s $CSV_FILE $TABLENAME_LNFILE"
 
 csvFile=$TABLENAME_LNFILE
 shImport="mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u $DB_USER -p$DB_PSWD $DB_NAME $csvFile"
+shCleanup="rm -rf $TABLENAME_LNFILE"
 
-sh="$shLnCSVFile ; $shImport" #import from csv to mysql ref. http://stackoverflow.com/a/17071108/248616, http://stackoverflow.com/a/2508648/248616
+sh="$shLnCSVFile ; $shImport ; $shCleanup" #import from csv to mysql ref. http://stackoverflow.com/a/17071108/248616, http://stackoverflow.com/a/2508648/248616
+
+evail $sh
 
 echo "
 db  : $DB_USER:$DB_PSWD@localhost/$DB_NAME
 csv : $CSV_FILE
 
-Commands to run
+Ran commands
 $sh
 "
