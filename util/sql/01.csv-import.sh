@@ -10,17 +10,31 @@ DB_PSWD='root'
 DB_NAME='yud_order_mining'
 
 CSV_FILE='~/Desktop/export-all-orders.csv'
+CSV_FILE='~/Desktop/small.csv'
+ORDER_TABLENAME='orders'
 
-TABLENAME_LNFILE='~/Desktop/orders.csv'
-shLnCSVFile="ln -s $CSV_FILE $TABLENAME_LNFILE"
+mysql="mysql -u $DB_USER -p$DB_PSWD $DB_NAME"
+sudo='sudo -H'
 
-csvFile=$TABLENAME_LNFILE
-shImport="mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u $DB_USER -p$DB_PSWD $DB_NAME $csvFile"
-shCleanup="rm -rf $TABLENAME_LNFILE"
+sql="SHOW VARIABLES LIKE 'secure_file_priv';";
+shWhereCanRun="$mysql -e \"$sql\" " #should be /var/lib/mysql-files
 
-sh="$shLnCSVFile ; $shImport ; $shCleanup" #import from csv to mysql ref. http://stackoverflow.com/a/17071108/248616, http://stackoverflow.com/a/2508648/248616
+file_priv='/var/lib/mysql-files'
+shCopy2Priv="$sudo cp -f $CSV_FILE $file_priv/"
 
-evail $sh
+sql="LOAD DATA INFILE '$CSV_FILE' INTO TABLE $ORDER_TABLENAME";
+shLoadData="$sudo $mysql -e \"$sql\" "
+
+sql="select * from orders limit 4;";
+shAftermath="$mysql -e '$sql'"
+
+sh="
+  $shWhereCanRun ; $shCopy2Priv ;
+  $shLoadData ;
+  $shAftermath ;
+" #import from csv to mysql ref. http://stackoverflow.com/a/17071108/248616, http://stackoverflow.com/a/2508648/248616
+
+eval $sh
 
 echo "
 db  : $DB_USER:$DB_PSWD@localhost/$DB_NAME
